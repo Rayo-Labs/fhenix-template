@@ -1,0 +1,6 @@
+
+> fhenix-hardhat-example@1.0.0 task:getCount /Users/gorkemyavuz/repos/fhenix-hardhat-example
+> hardhat task:getCount "#" "="
+
+
+ ELIFECYCLE  Command failed with exit code 1.
