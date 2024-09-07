@@ -154,25 +154,6 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: "eaddress",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "_encBalances",
-    outputs: [
-      {
-        internalType: "euint32",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "address",
         name: "owner",
         type: "address",
@@ -252,6 +233,38 @@ export const abi = [
   },
   {
     inputs: [],
+    name: "encDecimals",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "getEncryptedBalance",
+    outputs: [
+      {
+        internalType: "euint64",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "name",
     outputs: [
       {
@@ -316,16 +329,9 @@ export const abi = [
   {
     inputs: [
       {
-        components: [
-          {
-            internalType: "bytes",
-            name: "data",
-            type: "bytes",
-          },
-        ],
-        internalType: "struct inEaddress",
-        name: "encryptedTo",
-        type: "tuple",
+        internalType: "address",
+        name: "to",
+        type: "address",
       },
       {
         components: [
@@ -335,7 +341,7 @@ export const abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct inEuint32",
+        internalType: "struct inEuint64",
         name: "encryptedAmount",
         type: "tuple",
       },
@@ -384,22 +390,28 @@ export const abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct inEuint32",
+        internalType: "struct inEuint64",
         name: "amount",
         type: "tuple",
       },
     ],
     name: "unwrap",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
       {
-        internalType: "uint32",
+        internalType: "uint256",
         name: "amount",
-        type: "uint32",
+        type: "uint256",
       },
     ],
     name: "wrap",
