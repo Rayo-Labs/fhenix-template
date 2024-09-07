@@ -21,12 +21,12 @@ type TestnetConfig = {
   chainId: number;
   url: string;
   accounts?:
-    | string[]
-    | {
-        count: number;
-        mnemonic: string;
-        path: string;
-      };
+  | string[]
+  | {
+    count: number;
+    mnemonic: string;
+    path: string;
+  };
 };
 
 const testnetConfig: TestnetConfig = {
@@ -54,7 +54,7 @@ if (!keys) {
 
 const config: HardhatUserConfig = {
   solidity: "0.8.25",
-  defaultNetwork: "hardhat",
+  defaultNetwork: "testnet",
   networks: {
     testnet: testnetConfig,
   },

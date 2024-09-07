@@ -29,17 +29,16 @@ contract FhenixWEERC20 is ERC20 {
     _encBalances[msg.sender] = _encBalances[msg.sender] + shieldedAmount;
   }
 
-  function unwrap(inEuint64 memory amount) public returns (bool) {
+  function unwrap(inEuint64 memory amount) public {
     euint64 _amount = FHE.asEuint64(amount);
-    return true;
     // verify that our shielded balance is greater or equal than the requested amount
-    // FHE.req(_encBalances[msg.sender].gte(_amount));
+    FHE.req(_encBalances[msg.sender].gte(_amount));
     // // subtract amount from shielded balance
-    // _encBalances[msg.sender] = _encBalances[msg.sender] - _amount;
-    // uint64 decryptedAmount = FHE.decrypt(_amount);
-    // uint256 convertedAmount = _convertDecimalForWithdraw(decryptedAmount);
+    _encBalances[msg.sender] = _encBalances[msg.sender] - _amount;
+    uint64 decryptedAmount = FHE.decrypt(_amount);
+    uint256 convertedAmount = _convertDecimalForWithdraw(decryptedAmount);
     // // add amount to caller's public balance by calling the `mint` function
-    // _mint(msg.sender, convertedAmount);
+    _mint(msg.sender, convertedAmount);
   }
 
   function transferEncrypted(

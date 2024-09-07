@@ -1,4 +1,5 @@
 import { abi } from "./contract_calls/abi";
+import { FhenixClient } from 'fhenixjs';
 import deployments from "../../deployments/testnet/FhenixWEERC20.json";
 
 import hre from "hardhat";
@@ -20,9 +21,15 @@ async function ContractCall(
     privateKey,
     new ethers.JsonRpcProvider("https://api.helium.fhenix.zone"),
   );
+  const client = new FhenixClient({ provider: hre.ethers.provider });
+
   if (cfunc === "unwrap") {
     await fhenixjs.generatePermit(ca, undefined, wallet);
-    args[0] = await fhenixjs.encrypt_uint64(cargs[0]);
+    const encryptedUint64 = await client.encrypt_uint64(args[0]);
+    console.log("1. encryptedUint64: ", encryptedUint64);
+    // console.log("2. encryptedUint64: ", await fhenixjs.encrypt_uint64(cargs[0]));
+    // args[0] = await fhenixjs.encrypt_uint64(cargs[0]);
+    args[0] = encryptedUint64;
   } else if (cfunc === "transferEncrypted") {
     await fhenixjs.generatePermit(ca, undefined, wallet);
     args[1] = await fhenixjs.encrypt_uint64(cargs[1]);
@@ -56,7 +63,7 @@ async function main() {
       await ContractCall(contractAddress, abi, "wrap", [wrapAmount]);
       break;
     case "unwrap":
-      const unwrapAmount = BigInt(Number(param2));
+      const unwrapAmount = BigInt(Number(param2) * 10 ** 6);
       await ContractCall(contractAddress, abi, "unwrap", [unwrapAmount]);
       break;
     case "transferEncrypted":
