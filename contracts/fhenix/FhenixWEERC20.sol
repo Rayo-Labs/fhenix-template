@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "@fhenixprotocol/contracts/access/Permissioned.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@fhenixprotocol/contracts/FHE.sol";
 
-contract FhenixWEERC20 is ERC20 {
+contract FhenixWEERC20 is ERC20, Permissioned {
   uint8 public constant encDecimals = 6;
 
   mapping(address => euint64) internal _encBalances;
@@ -51,6 +52,14 @@ contract FhenixWEERC20 is ERC20 {
     // Add to the balance of `to` and subract from the balance of `from`.
     _encBalances[to] = _encBalances[to] + amount;
     _encBalances[msg.sender] = _encBalances[msg.sender] - amount;
+  }
+
+  function getBalanceEncrypted(Permission calldata perm) 
+    public 
+    view 
+    onlySender(perm) 
+    returns (uint256) {
+      return FHE.decrypt(_encBalances[msg.sender]);
   }
 
   // Converts the amount for deposit.
