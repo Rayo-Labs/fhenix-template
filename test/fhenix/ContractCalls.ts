@@ -1,5 +1,5 @@
-import { abi } from "./contract_calls/abi";
-import { FhenixClient, getPermit } from 'fhenixjs';
+import { abi } from "./abi";
+import { FhenixClient, getPermit } from "fhenixjs";
 import deployments from "../../deployments/testnet/FhenixWEERC20.json";
 
 import hre from "hardhat";
@@ -25,16 +25,13 @@ async function ContractCall(
 
   if (cfunc === "unwrap") {
     const encryptedUint64 = await client.encrypt_uint64(args[0]);
-    console.log("1. encryptedUint64: ", encryptedUint64);
-    // console.log("2. encryptedUint64: ", await fhenixjs.encrypt_uint64(cargs[0]));
-    // args[0] = await fhenixjs.encrypt_uint64(cargs[0]);
     args[0] = encryptedUint64;
   } else if (cfunc === "transferEncrypted") {
     args[1] = await fhenixjs.encrypt_uint64(cargs[1]);
   } else if (cfunc === "getBalanceEncrypted") {
     const permit = await getPermit(contractAddress, hre.ethers.provider);
     const permission = client.extractPermitPermission(permit!);
-    console.log(permission)
+    console.log(permission);
     args[0] = permission;
   }
   const contract = new ethers.Contract(ca, cabi, wallet);
