@@ -26,7 +26,7 @@ const func: DeployFunction = async function () {
 
   const contract = await deploy(contractName, {
     from: signer.address,
-    args: ["Fhenix Wrapped Ether", "FHE"],
+    args: ["Fhenix Wrapped Ether", "FWE"],
     log: true,
     skipIfAlreadyDeployed: false,
   });
