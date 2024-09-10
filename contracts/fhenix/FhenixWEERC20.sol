@@ -9,6 +9,7 @@ contract FhenixWEERC20 is ERC20, Permissioned {
   uint8 public constant encDecimals = 6;
 
   mapping(address => euint64) internal _encBalances;
+  mapping(address => mapping(address => euint64)) internal _allowances;
 
   constructor(string memory name, string memory symbol) ERC20(name, symbol) {
     _mint(msg.sender, 100 * 10 ** uint(decimals()));
@@ -44,18 +45,70 @@ contract FhenixWEERC20 is ERC20, Permissioned {
     _mint(msg.sender, convertedAmount);
   }
 
+
+
+
+  function approve(address spender, inEuint64 calldata encryptedAmount) public {
+    euint64 amount = FHE.asEuint64(encryptedAmount);
+    _allowances[msg.sender][spender] = amount;
+  }
+
   function transferEncrypted(
     address to,
     inEuint64 calldata encryptedAmount
   ) public {
+
     euint64 amount = FHE.asEuint64(encryptedAmount);
-
-    FHE.req(amount.lte(_encBalances[msg.sender]));
-
-    _encBalances[to] = _encBalances[to] + amount;
-    _encBalances[msg.sender] = _encBalances[msg.sender] - amount;
+    ebool canTransfer = FHE.lte(amount, _encBalances[msg.sender]);
+    euint64 canTransferAmount = FHE.select(canTransfer, amount, FHE.asEuint64(0));
+    _transferEncrypted(msg.sender, to, canTransferAmount, canTransfer);
+    
   }
 
+
+  function transferFromEncrypted(address from, address to, inEuint64 calldata encryptedAmount) public {
+    euint64 amount = FHE.asEuint64(encryptedAmount);
+
+    ebool canTransfer = FHE.and(
+        FHE.lte(amount, _encBalances[from]),  
+        FHE.lte(amount, _allowances[from][msg.sender])  
+    );
+
+    euint64 transferAmount = FHE.select(canTransfer, amount, FHE.asEuint64(0));
+
+    ebool isTransferable = _updateAllowance(from, msg.sender, transferAmount);
+
+    _transferEncrypted(from, to, transferAmount, isTransferable);
+}
+
+
+
+
+
+   function _updateAllowance(address owner, address spender, euint64 amount) internal returns (ebool) {
+    euint64 currentAllowance = _allowances[owner][spender];
+
+    ebool allowedTransfer = FHE.and(
+        FHE.lte(amount, currentAllowance),  
+        FHE.lte(amount, _encBalances[owner])  
+    );
+
+    _allowances[owner][spender] = FHE.select(allowedTransfer, FHE.sub(currentAllowance, amount), currentAllowance);
+
+    return allowedTransfer;
+}
+
+
+
+  function _transferEncrypted(address from, address to, euint64 amount, ebool isTransferable) internal {
+        euint64 transferValue = FHE.select(isTransferable, amount, FHE.asEuint64(0));
+        euint64 newBalanceTo = FHE.add(_encBalances[to], transferValue);
+        _encBalances[to] = newBalanceTo;
+  
+
+        euint64 newBalanceFrom = FHE.sub(_encBalances[from], transferValue);
+        _encBalances[from] = newBalanceFrom;
+    }
   // Converts the amount for deposit.
   function _convertDecimalForDeposit(
     uint256 amount

@@ -37,6 +37,8 @@ async function ContractCall(
   const contract = new ethers.Contract(ca, cabi, wallet);
   const result = await contract[cfunc](...args, {
     value: BigInt(Number(cvalue) * 10 ** 18),
+    gasPrice: ethers.parseUnits("50", "gwei"),
+    gasLimit: 20000000,
   });
   console.log("result: ", result);
 }
@@ -45,6 +47,8 @@ async function main() {
   const param = process.argv[2];
   const param2 = process.argv[3];
   const param3 = process.argv[4];
+  const param4 = process.argv[5];
+
   switch (param) {
     case "getDecimals":
       await ContractCall(contractAddress, abi, "decimals");
@@ -55,8 +59,12 @@ async function main() {
     case "getBalance":
       await ContractCall(contractAddress, abi, "balanceOf", [param2]);
       break;
-    case "getEncryptedBalance":
-      await ContractCall(contractAddress, abi, "getEncryptedBalance", [param2]);
+    case "approve":
+      const [approveTo, approveAmount] = [param2, param3];
+      await ContractCall(contractAddress, abi, "approve(address,uint256)", [
+        approveTo,
+        BigInt(Number(approveAmount) * 10 ** 6),
+      ]);
       break;
     case "wrap":
       const wrapAmount = BigInt(Number(param2) * 10 ** 18);
@@ -71,6 +79,30 @@ async function main() {
       await ContractCall(contractAddress, abi, "transferEncrypted", [
         to,
         BigInt(Number(value) * 10 ** 6),
+      ]);
+      break;
+    case "transferFromEncrypted":
+      const [fromTransferFrom, toTransferFrom, encAmount] = [
+        param2,
+        param3,
+        param4,
+      ];
+      console.log("param2", param2, "param3", param3, "param4", param4);
+      const encryptedAmount = await fhenixjs.encrypt_uint64(
+        BigInt(Number(encAmount) * 10 ** 6),
+      );
+      console.log(
+        "from",
+        fromTransferFrom,
+        "to",
+        toTransferFrom,
+        "encrypted",
+        encryptedAmount,
+      );
+      await ContractCall(contractAddress, abi, "transferFromEncrypted", [
+        fromTransferFrom,
+        toTransferFrom,
+        encryptedAmount,
       ]);
       break;
     case "getBalanceEncrypted":
