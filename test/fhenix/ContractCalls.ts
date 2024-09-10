@@ -33,12 +33,15 @@ async function ContractCall(
     const permission = client.extractPermitPermission(permit!);
     console.log(permission);
     args[0] = permission;
+  } else if (cfunc === "approveEncrypted") {
+    args[1] = await fhenixjs.encrypt_uint64(cargs[1]);
   }
+
   const contract = new ethers.Contract(ca, cabi, wallet);
   const result = await contract[cfunc](...args, {
     value: BigInt(Number(cvalue) * 10 ** 18),
-    gasPrice: ethers.parseUnits("50", "gwei"),
-    gasLimit: 20000000,
+    // gasPrice: ethers.parseUnits("50", "gwei"),
+    // gasLimit: 20000000,
   });
   console.log("result: ", result);
 }
@@ -61,7 +64,7 @@ async function main() {
       break;
     case "approve":
       const [approveTo, approveAmount] = [param2, param3];
-      await ContractCall(contractAddress, abi, "approve(address,uint256)", [
+      await ContractCall(contractAddress, abi, "approveEncrypted", [
         approveTo,
         BigInt(Number(approveAmount) * 10 ** 6),
       ]);

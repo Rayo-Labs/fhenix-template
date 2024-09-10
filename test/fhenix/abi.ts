@@ -278,7 +278,7 @@ export const abi = [
         type: "tuple",
       },
     ],
-    name: "approve",
+    name: "approveEncrypted",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

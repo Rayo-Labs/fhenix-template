@@ -48,7 +48,7 @@ contract FhenixWEERC20 is ERC20, Permissioned {
 
 
 
-  function approve(address spender, inEuint64 calldata encryptedAmount) public {
+  function approveEncrypted(address spender, inEuint64 calldata encryptedAmount) public {
     euint64 amount = FHE.asEuint64(encryptedAmount);
     _allowances[msg.sender][spender] = amount;
   }
@@ -76,7 +76,7 @@ contract FhenixWEERC20 is ERC20, Permissioned {
 
     euint64 transferAmount = FHE.select(canTransfer, amount, FHE.asEuint64(0));
 
-    ebool isTransferable = _updateAllowance(from, msg.sender, transferAmount);
+    ebool isTransferable = _updateAllowance(from, msg.sender, transferAmount,canTransfer);
 
     _transferEncrypted(from, to, transferAmount, isTransferable);
 }
@@ -85,30 +85,24 @@ contract FhenixWEERC20 is ERC20, Permissioned {
 
 
 
-   function _updateAllowance(address owner, address spender, euint64 amount) internal returns (ebool) {
+   function _updateAllowance(address owner, address spender, euint64 amount,ebool isTransferable) internal returns (ebool) {
     euint64 currentAllowance = _allowances[owner][spender];
 
-    ebool allowedTransfer = FHE.and(
-        FHE.lte(amount, currentAllowance),  
-        FHE.lte(amount, _encBalances[owner])  
-    );
+    _allowances[owner][spender] = FHE.select(isTransferable, FHE.sub(currentAllowance, amount), currentAllowance);
 
-    _allowances[owner][spender] = FHE.select(allowedTransfer, FHE.sub(currentAllowance, amount), currentAllowance);
-
-    return allowedTransfer;
+    return isTransferable;
 }
 
 
 
   function _transferEncrypted(address from, address to, euint64 amount, ebool isTransferable) internal {
         euint64 transferValue = FHE.select(isTransferable, amount, FHE.asEuint64(0));
-        euint64 newBalanceTo = FHE.add(_encBalances[to], transferValue);
-        _encBalances[to] = newBalanceTo;
-  
 
-        euint64 newBalanceFrom = FHE.sub(_encBalances[from], transferValue);
-        _encBalances[from] = newBalanceFrom;
+        _encBalances[to] = FHE.add(_encBalances[to], transferValue);
+  
+        _encBalances[from] = FHE.sub(_encBalances[from], transferValue);
     }
+
   // Converts the amount for deposit.
   function _convertDecimalForDeposit(
     uint256 amount
