@@ -9,8 +9,6 @@ const func: DeployFunction = async function () {
   const { deploy } = hre.deployments;
   const [signer] = await ethers.getSigners();
 
-  const contractName = "FhenixWEERC20";
-
   if ((await ethers.provider.getBalance(signer.address)).toString() === "0") {
     if (hre.network.name === "localfhenix") {
       await fhenixjs.getFunds(signer.address);
@@ -24,15 +22,23 @@ const func: DeployFunction = async function () {
     }
   }
 
-  const contract = await deploy(contractName, {
+  const weerc20 = await deploy("FhenixWEERC20", {
     from: signer.address,
     args: ["Fhenix Wrapped Ether", "FWE"],
     log: true,
     skipIfAlreadyDeployed: false,
   });
 
+  const bridge = await deploy("FhenixBridge", {
+    from: signer.address,
+    args: [weerc20.address],
+    log: true,
+    skipIfAlreadyDeployed: false,
+  });
+
   console.log("Signer address: ", signer.address);
-  console.log(`Contract contract: `, contract.address);
+  console.log(`Token contract: `, weerc20.address);
+  console.log(`Bridge contract: `, bridge.address);
 };
 
 export default func;
