@@ -5,6 +5,11 @@ import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import "@fhenixprotocol/contracts/FHE.sol";
 
 interface IFhenixWEERC20 {
+  function transferEncrypted(
+    address recipient,
+    inEuint64 calldata encryptedAmount
+  ) external;
+
   function transferFromEncrypted(
     address sender,
     address recipient,
@@ -48,7 +53,7 @@ contract FhenixBridge is Ownable2Step {
   }
 
   function withdraw(inEuint64 calldata _encryptedAmount) public onlyOwner {
-    weerc20.transferFromEncrypted(address(this), msg.sender, _encryptedAmount);
+    weerc20.transferEncrypted(msg.sender, _encryptedAmount);
   }
 
   function _encodePacketData(
