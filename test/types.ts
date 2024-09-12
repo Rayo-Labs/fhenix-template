@@ -1,3 +1,4 @@
+import { Address } from "hardhat-deploy/types";
 import type { Counter } from "../types";
 import type { FheInstance } from "../utils/instance";
 import type { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/dist/src/signer-with-address";
@@ -16,3 +17,16 @@ declare module "mocha" {
 export interface Signers {
   admin: SignerWithAddress;
 }
+
+export type EventPacketArgs = {
+  encryptedTo: bigint;
+  encryptedAmount: bigint;
+  toPermit: string;
+  amountPermit: string;
+  relayerAddress: Address;
+};
+
+export type EventPacket = {
+  eventName: string;
+  args: EventPacketArgs;
+};

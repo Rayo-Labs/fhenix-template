@@ -50,15 +50,15 @@ contract FhenixBridge is Ownable2Step {
     inEaddress calldata _encryptedTo,
     inEuint64 calldata _encryptedAmount,
     address _relayerAddress,
-    bytes32 _seal
+    bytes32 _relayerSeal
   ) public {
     weerc20.transferFromEncrypted(msg.sender, address(this), _encryptedAmount);
 
     eaddress to = FHE.asEaddress(_encryptedTo);
     euint64 amount = FHE.asEuint64(_encryptedAmount);
 
-    string memory toPermit = FHE.sealoutput(to, _seal);
-    string memory amountPermit = FHE.sealoutput(amount, _seal);
+    string memory toPermit = FHE.sealoutput(to, _relayerSeal);
+    string memory amountPermit = FHE.sealoutput(amount, _relayerSeal);
 
     emit Packet(to, amount, toPermit, amountPermit, _relayerAddress);
   }

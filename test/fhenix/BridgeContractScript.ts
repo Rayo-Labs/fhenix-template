@@ -47,7 +47,7 @@ async function ContractCall(
   if (cfunc === "bridgeWEERC20") {
     const encryptedTo = await client.encrypt_address(args[0]);
     const encryptedAmount = await client.encrypt_uint64(args[1]);
-    const seal = ethers.keccak256(padToBytes32(relayerAddress));
+    const seal = "0xee5e89b37225bdf1c29496f44947c375d657bb867e79c9b0d2913fbbc83b8c30"
 
     args[0] = encryptedTo;
     args[1] = encryptedAmount;
