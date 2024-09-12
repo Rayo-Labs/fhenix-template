@@ -5,14 +5,31 @@ import hre from "hardhat";
 
 const { fhenixjs, ethers } = hre;
 
-const contractAddress = deployments.address;
-const contractABI = deployments.abi;
-
 const wallets: { [key: number]: string } = {
   1: process.env.KEY as string,
   2: process.env.KEY2 as string,
   3: process.env.KEY3 as string,
 };
+
+const contractAddress = deployments.address;
+const relayerAddress = "0x9C3Ad2B5f00EC8e8564244EBa59692Dd5e57695b";
+const contractABI = deployments.abi;
+
+function padToBytes32(hexString: string): string {
+  if (!hexString.startsWith("0x")) {
+    hexString = "0x" + hexString;
+  }
+
+  const hexWithoutPrefix = hexString.slice(2);
+
+  if (hexWithoutPrefix.length > 64) {
+    throw new Error("Input hex string is too long to be converted to bytes32");
+  }
+
+  const paddedHex = hexWithoutPrefix.padStart(64, "0");
+
+  return "0x" + paddedHex;
+}
 
 async function ContractCall(
   key: number,
@@ -30,9 +47,12 @@ async function ContractCall(
   if (cfunc === "bridgeWEERC20") {
     const encryptedTo = await client.encrypt_address(args[0]);
     const encryptedAmount = await client.encrypt_uint64(args[1]);
+    const seal = ethers.keccak256(padToBytes32(relayerAddress));
+
     args[0] = encryptedTo;
     args[1] = encryptedAmount;
-    args[2] = "0x5Bd64FFc654CBD6c5fa92CDf88A158059656F477";
+    args[2] = relayerAddress;
+    args[3] = seal;
   } else if (cfunc === "withdraw") {
     const encryptedAmount = await client.encrypt_uint64(args[0]);
     args[0] = encryptedAmount;

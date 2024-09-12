@@ -22,8 +22,10 @@ contract FhenixBridge is Ownable2Step {
   mapping(address => bool) public relayers;
 
   event Packet(
-    inEaddress encryptedTo,
-    inEuint64 encryptedAmount,
+    eaddress encryptedTo,
+    euint64 encryptedAmount,
+    string toPermit,
+    string amountPermit,
     address relayerAddress
   );
 
@@ -47,11 +49,18 @@ contract FhenixBridge is Ownable2Step {
   function bridgeWEERC20(
     inEaddress calldata _encryptedTo,
     inEuint64 calldata _encryptedAmount,
-    address _relayerAddress
+    address _relayerAddress,
+    bytes32 _seal
   ) public {
     weerc20.transferFromEncrypted(msg.sender, address(this), _encryptedAmount);
 
-    emit Packet(_encryptedTo, _encryptedAmount, _relayerAddress);
+    eaddress to = FHE.asEaddress(_encryptedTo);
+    euint64 amount = FHE.asEuint64(_encryptedAmount);
+
+    string memory toPermit = FHE.sealoutput(to, _seal);
+    string memory amountPermit = FHE.sealoutput(amount, _seal);
+
+    emit Packet(to, amount, toPermit, amountPermit, _relayerAddress);
   }
 
   function withdraw(inEuint64 calldata _encryptedAmount) public onlyOwner {
