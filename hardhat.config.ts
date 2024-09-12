@@ -35,7 +35,7 @@ const testnetConfig: TestnetConfig = {
 };
 
 // Select either private keys or mnemonic from .env file or environment variables
-const keys = process.env.KEY as string;
+const keys = process.env.KEY3 as string;
 if (!keys) {
   let mnemonic = process.env.MNEMONIC;
   if (!mnemonic) {
