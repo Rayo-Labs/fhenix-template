@@ -58,6 +58,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "fhenixjs": "0.2.1"
+    "fhenixjs": "0.2.1",
+    "fhevmjs": "^0.5.2"
   }
 }

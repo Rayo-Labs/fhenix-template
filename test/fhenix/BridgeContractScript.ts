@@ -12,7 +12,7 @@ const wallets: { [key: number]: string } = {
 };
 
 const contractAddress = deployments.address;
-const relayerAddress = "0x9C3Ad2B5f00EC8e8564244EBa59692Dd5e57695b";
+const relayerAddress = "0xA139Bcfb689926ebCF2AABDbd32FBaFC250e70d9";
 const contractABI = deployments.abi;
 
 function padToBytes32(hexString: string): string {
@@ -47,7 +47,7 @@ async function ContractCall(
   if (cfunc === "bridgeWEERC20") {
     const encryptedTo = await client.encrypt_address(args[0]);
     const encryptedAmount = await client.encrypt_uint64(args[1]);
-    const seal = "0xee5e89b37225bdf1c29496f44947c375d657bb867e79c9b0d2913fbbc83b8c30"
+    const seal = "0xae8a6a854a52108fe6ae6ff366b2acdd4f778ad1d8c3642fd0c1dcc784f5cd4d"
 
     args[0] = encryptedTo;
     args[1] = encryptedAmount;
