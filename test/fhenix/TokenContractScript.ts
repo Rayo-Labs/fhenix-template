@@ -5,7 +5,7 @@ import hre from "hardhat";
 
 const { fhenixjs, ethers } = hre;
 
-const contractAddress = deployments.address;
+const contractAddress = deployments.address; // 0x3Db8652F4F648e2090A5dA12013Dc1aee9f8B000
 const contractABI = deployments.abi;
 
 const wallets: { [key: number]: string } = {

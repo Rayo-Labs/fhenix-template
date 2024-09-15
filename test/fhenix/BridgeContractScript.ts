@@ -11,7 +11,7 @@ const wallets: { [key: number]: string } = {
   3: process.env.KEY3 as string,
 };
 
-const contractAddress = deployments.address;
+const contractAddress = deployments.address; // 0x4B793f96591D23a2EF4B7604213E704d35E8497a
 const relayerAddress = "0xA139Bcfb689926ebCF2AABDbd32FBaFC250e70d9";
 const contractABI = deployments.abi;
 
@@ -48,7 +48,7 @@ async function ContractCall(
     const encryptedTo = await client.encrypt_address(args[0]);
     const encryptedAmount = await client.encrypt_uint64(args[1]);
     const seal =
-      "0xae8a6a854a52108fe6ae6ff366b2acdd4f778ad1d8c3642fd0c1dcc784f5cd4d";
+      "0xf01347c80b552b714b3c51e5d6666362451adbf030e47dcdc02160619fd13831";
 
     args[0] = encryptedTo;
     args[1] = encryptedAmount;

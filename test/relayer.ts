@@ -4,365 +4,341 @@ import deployments from "../deployments/testnet/FhenixBridge.json";
 import { createInstance as createFhevmClient } from "fhevmjs";
 
 const fhenixBridgeContractAddress = deployments.address;
-const zamaBridgeContractAddress = "0x74431f4162EB7F8137491DA5ad0449626de58E94";
+const zamaBridgeContractAddress = "0xcfBA155e87dA8Ed34B263a78f224e188D53A8264";
 
 const fhenixContractABI = deployments.abi;
 const zamaContractABI = [
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: "address",
-        name: "_tokenAddress",
-        type: "address",
-      },
+        "internalType": "address",
+        "name": "_tokenAddress",
+        "type": "address"
+      }
     ],
-    stateMutability: "nonpayable",
-    type: "constructor",
+    "stateMutability": "nonpayable",
+    "type": "constructor"
   },
   {
-    inputs: [],
-    name: "DecryptionFailed",
-    type: "error",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableInvalidOwner",
+    "type": "error"
   },
   {
-    inputs: [],
-    name: "OnlyRelayer",
-    type: "error",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableUnauthorizedAccount",
+    "type": "error"
   },
   {
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        internalType: "address",
-        name: "owner",
-        type: "address",
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
       },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "euint64",
+        "name": "encryptedAmount",
+        "type": "uint256"
+      }
     ],
-    name: "OwnableInvalidOwner",
-    type: "error",
+    "name": "IntentProcessed",
+    "type": "event"
   },
   {
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        internalType: "address",
-        name: "account",
-        type: "address",
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
       },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
-    name: "OwnableUnauthorizedAccount",
-    type: "error",
+    "name": "OwnershipTransferStarted",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
       },
       {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "einput",
-        name: "encryptedAmount",
-        type: "bytes32",
-      },
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
-    name: "IntentProcessed",
-    type: "event",
+    "name": "OwnershipTransferred",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
+        "indexed": false,
+        "internalType": "eaddress",
+        "name": "to",
+        "type": "uint256"
       },
       {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
+        "indexed": false,
+        "internalType": "euint64",
+        "name": "amount",
+        "type": "uint256"
       },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "relayer",
+        "type": "address"
+      }
     ],
-    name: "OwnershipTransferStarted",
-    type: "event",
+    "name": "Packet",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
+    "anonymous": false,
+    "inputs": [
       {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "num",
+        "type": "uint256"
+      }
     ],
-    name: "OwnershipTransferred",
-    type: "event",
+    "name": "TestPacket",
+    "type": "event"
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "bytes",
-        name: "packet",
-        type: "bytes",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "relayerAddress",
-        type: "address",
-      },
-    ],
-    name: "Packet",
-    type: "event",
+    "inputs": [],
+    "name": "acceptOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    inputs: [],
-    name: "acceptOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    "inputs": [
+      {
+        "internalType": "einput",
+        "name": "_encryptedTo",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "einput",
+        "name": "_encryptedAmount",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_inputProof",
+        "type": "bytes"
+      },
+      {
+        "internalType": "address",
+        "name": "_relayerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "bridgeWEERC20",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [],
+    "name": "gateway",
+    "outputs": [
       {
-        internalType: "einput",
-        name: "_encryptedTo",
-        type: "bytes32",
-      },
-      {
-        internalType: "einput",
-        name: "_encryptedAmount",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes",
-        name: "_inputProof",
-        type: "bytes",
-      },
-      {
-        internalType: "address",
-        name: "_relayerAddress",
-        type: "address",
-      },
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
     ],
-    name: "bridgeWEERC20",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint64",
-        name: "intentId",
-        type: "uint64",
-      },
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
     ],
-    name: "callbackRecvIntent",
-    outputs: [
+    "name": "intents",
+    "outputs": [
       {
-        internalType: "bool",
-        name: "",
-        type: "bool",
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
       },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "euint64",
+        "name": "encryptedAmount",
+        "type": "uint256"
+      }
     ],
-    stateMutability: "nonpayable",
-    type: "function",
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [],
-    name: "gateway",
-    outputs: [
+    "inputs": [],
+    "name": "nextIntentId",
+    "outputs": [
       {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
     ],
-    stateMutability: "view",
-    type: "function",
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: "uint256",
-        name: "intentId",
-        type: "uint256",
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
       },
+      {
+        "internalType": "einput",
+        "name": "_encryptedAmount",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "inputProof",
+        "type": "bytes"
+      }
     ],
-    name: "intents",
-    outputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "eaddress",
-        name: "to",
-        type: "uint256",
-      },
-      {
-        internalType: "einput",
-        name: "encryptedAmount",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes",
-        name: "inputProof",
-        type: "bytes",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
+    "name": "onRecvIntent",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
       {
-        internalType: "einput",
-        name: "_encryptedTo",
-        type: "bytes32",
-      },
-      {
-        internalType: "einput",
-        name: "_encryptedAmount",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes",
-        name: "inputProof",
-        type: "bytes",
-      },
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
     ],
-    name: "onRecvIntent",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [],
-    name: "owner",
-    outputs: [
+    "inputs": [],
+    "name": "pendingOwner",
+    "outputs": [
       {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
     ],
-    stateMutability: "view",
-    type: "function",
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [],
-    name: "pendingOwner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "relayers",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
+    "inputs": [],
+    "name": "testEmit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [],
+    "name": "weerc20",
+    "outputs": [
       {
-        internalType: "address",
-        name: "_relayer",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "_status",
-        type: "bool",
-      },
+        "internalType": "contract IZamaWEERC20",
+        "name": "",
+        "type": "address"
+      }
     ],
-    name: "setRelayer",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
+    "stateMutability": "view",
+    "type": "function"
   },
   {
-    inputs: [
+    "inputs": [
       {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
+        "internalType": "einput",
+        "name": "_encryptedAmount",
+        "type": "bytes32"
       },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "weerc20",
-    outputs: [
       {
-        internalType: "contract IZamaWEERC20",
-        name: "",
-        type: "address",
-      },
+        "internalType": "bytes",
+        "name": "_inputProof",
+        "type": "bytes"
+      }
     ],
-    stateMutability: "view",
-    type: "function",
-  },
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
 ];
 
 const { fhenixjs, ethers } = hre;
@@ -370,7 +346,7 @@ const { fhenixjs, ethers } = hre;
 const fhenixProvider = ethers.provider;
 const zamaProvider = new ethers.JsonRpcProvider("https://devnet.zama.ai");
 
-const zamaWallet = new ethers.Wallet(process.env.KEY3!, zamaProvider);
+const zamaWallet = new ethers.Wallet(process.env.KEY!, zamaProvider);
 
 const fhenixClient = new FhenixClient({ provider: fhenixProvider });
 
@@ -424,13 +400,13 @@ async function main() {
       zamaBridgeContractAddress,
       signer.address,
     );
-    const einputs = einput.addAddress(clearTo).add64(clearAmount).encrypt();
+    const einputs = einput.add64(clearAmount).encrypt();
 
     console.log("encrypted inputs, calling onRecvIntent on Zama");
 
     const onRecvIntentResult = await zamaBridgeContract.onRecvIntent(
+      clearTo,
       einputs.handles[0],
-      einputs.handles[1],
       einputs.inputProof,
     );
 
