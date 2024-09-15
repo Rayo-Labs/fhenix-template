@@ -19,7 +19,16 @@ interface IFhenixWEERC20 {
 
 contract FhenixBridge is Ownable2Step {
   IFhenixWEERC20 public weerc20;
-  mapping(address => bool) public relayers;
+
+  struct Intent {
+    address from;
+    address to;
+    euint64 amount;
+  }
+
+  uint64 public nextIntentId = 0;
+
+  mapping(uint64 => Intent) public intents;
 
   event Packet(
     eaddress encryptedTo,
@@ -28,22 +37,14 @@ contract FhenixBridge is Ownable2Step {
     string amountPermit,
     address relayerAddress
   );
-
-  error OnlyRelayer();
-
-  modifier onlyRelayer() {
-    if (!relayers[msg.sender]) {
-      revert OnlyRelayer();
-    }
-    _;
-  }
+  event IntentProcesses(
+    address indexed from,
+    address indexed to,
+    euint64 amount
+  );
 
   constructor(address _tokenAddress) Ownable(msg.sender) {
     weerc20 = IFhenixWEERC20(_tokenAddress);
-  }
-
-  function setRelayer(address _relayer, bool _status) public onlyOwner {
-    relayers[_relayer] = _status;
   }
 
   function bridgeWEERC20(
@@ -61,6 +62,21 @@ contract FhenixBridge is Ownable2Step {
     string memory amountPermit = FHE.sealoutput(amount, _relayerSeal);
 
     emit Packet(to, amount, toPermit, amountPermit, _relayerAddress);
+  }
+
+  function onRecvIntent(
+    address _to,
+    inEuint64 calldata _encryptedAmount
+  ) public {
+    weerc20.transferFromEncrypted(msg.sender, _to, _encryptedAmount);
+
+    euint64 amount = FHE.asEuint64(_encryptedAmount);
+
+    nextIntentId++;
+    Intent memory intent = Intent({from: msg.sender, to: _to, amount: amount});
+    intents[nextIntentId] = intent;
+
+    emit IntentProcesses(msg.sender, _to, amount);
   }
 
   function withdraw(inEuint64 calldata _encryptedAmount) public onlyOwner {

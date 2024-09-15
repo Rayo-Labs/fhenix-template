@@ -21,12 +21,12 @@ type TestnetConfig = {
   chainId: number;
   url: string;
   accounts?:
-  | string[]
-  | {
-    count: number;
-    mnemonic: string;
-    path: string;
-  };
+    | string[]
+    | {
+        count: number;
+        mnemonic: string;
+        path: string;
+      };
 };
 
 const testnetConfig: TestnetConfig = {
@@ -35,7 +35,7 @@ const testnetConfig: TestnetConfig = {
 };
 
 // Select either private keys or mnemonic from .env file or environment variables
-const keys = process.env.KEY3 as string;
+const keys = process.env.KEY as string;
 if (!keys) {
   let mnemonic = process.env.MNEMONIC;
   if (!mnemonic) {

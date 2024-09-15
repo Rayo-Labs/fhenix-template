@@ -47,12 +47,16 @@ async function ContractCall(
   if (cfunc === "bridgeWEERC20") {
     const encryptedTo = await client.encrypt_address(args[0]);
     const encryptedAmount = await client.encrypt_uint64(args[1]);
-    const seal = "0xae8a6a854a52108fe6ae6ff366b2acdd4f778ad1d8c3642fd0c1dcc784f5cd4d"
+    const seal =
+      "0xae8a6a854a52108fe6ae6ff366b2acdd4f778ad1d8c3642fd0c1dcc784f5cd4d";
 
     args[0] = encryptedTo;
     args[1] = encryptedAmount;
     args[2] = relayerAddress;
     args[3] = seal;
+  } else if (cfunc === "onRecvIntent") {
+    const encryptedIntentId = await client.encrypt_uint64(args[1]);
+    args[1] = encryptedIntentId;
   } else if (cfunc === "withdraw") {
     const encryptedAmount = await client.encrypt_uint64(args[0]);
     args[0] = encryptedAmount;
@@ -73,7 +77,19 @@ async function main() {
   const param3 = process.argv[5];
 
   switch (param1) {
+    case "nextIntentId":
+      await ContractCall(Number(wallet), param1);
+      break;
+    case "intents":
+      await ContractCall(Number(wallet), param1, [param2]);
+      break;
     case "bridgeWEERC20":
+      await ContractCall(Number(wallet), param1, [
+        param2,
+        BigInt(Number(param3) * 10 ** 6),
+      ]);
+      break;
+    case "onRecvIntent":
       await ContractCall(Number(wallet), param1, [
         param2,
         BigInt(Number(param3) * 10 ** 6),
