@@ -2,344 +2,12 @@ import { FhenixClient, getPermit } from "fhenixjs";
 import hre from "hardhat";
 import deployments from "../deployments/testnet/FhenixBridge.json";
 import { createInstance as createFhevmClient } from "fhevmjs";
+import { zamaContractABI } from "../utils/ABI/ZamaContractABI";
 
 const fhenixBridgeContractAddress = deployments.address;
-const zamaBridgeContractAddress = "0xcfBA155e87dA8Ed34B263a78f224e188D53A8264";
+const zamaBridgeContractAddress = "0xBbabedcc34CbB945717a5B356C7c70830F6bBEd1";
 
 const fhenixContractABI = deployments.abi;
-const zamaContractABI = [
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenAddress",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnableInvalidOwner",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "OwnableUnauthorizedAccount",
-    "type": "error"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "euint64",
-        "name": "encryptedAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "IntentProcessed",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferStarted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "eaddress",
-        "name": "to",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "euint64",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "relayer",
-        "type": "address"
-      }
-    ],
-    "name": "Packet",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "num",
-        "type": "uint256"
-      }
-    ],
-    "name": "TestPacket",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "acceptOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "einput",
-        "name": "_encryptedTo",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "einput",
-        "name": "_encryptedAmount",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_inputProof",
-        "type": "bytes"
-      },
-      {
-        "internalType": "address",
-        "name": "_relayerAddress",
-        "type": "address"
-      }
-    ],
-    "name": "bridgeWEERC20",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "gateway",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
-    "name": "intents",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "euint64",
-        "name": "encryptedAmount",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "nextIntentId",
-    "outputs": [
-      {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "internalType": "einput",
-        "name": "_encryptedAmount",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "inputProof",
-        "type": "bytes"
-      }
-    ],
-    "name": "onRecvIntent",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "pendingOwner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "testEmit",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "weerc20",
-    "outputs": [
-      {
-        "internalType": "contract IZamaWEERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "einput",
-        "name": "_encryptedAmount",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_inputProof",
-        "type": "bytes"
-      }
-    ],
-    "name": "withdraw",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-];
 
 const { fhenixjs, ethers } = hre;
 
@@ -379,6 +47,13 @@ async function main() {
     gatewayUrl: "https://gateway.devnet.zama.ai",
   });
   console.log("Instance", zamaClient);
+
+  const { publicKey, privateKey: reEncryptPrivateKey } =
+    zamaClient.generateKeypair();
+
+  const eip712 = zamaClient.createEIP712(publicKey, zamaBridgeContractAddress);
+
+  const signature = await zamaWallet.signMessage(JSON.stringify(eip712));
 
   const [signer] = await ethers.getSigners();
 
@@ -422,6 +97,51 @@ async function main() {
 
   zamaBridgeContract.on("IntentProcessed", (log1, log2, log3) => {
     console.log("Intent Processed", log1, log2, log3);
+  });
+
+  zamaBridgeContract.on("TestPacket", (log1) => {
+    console.log("TestPacket works", log1);
+  });
+
+  zamaBridgeContract.on("Packet", async (log1, log2, log3) => {
+    console.log("Packet", log1, log2, log3);
+
+    console.log("is log1", log1);
+    console.log("is reEncryptPrivateKey", reEncryptPrivateKey);
+    console.log("is publicKey", publicKey);
+    console.log("is signature", signature);
+    console.log("is zamaBridgeContractAddress", zamaBridgeContractAddress);
+    console.log("is zamaWallet.address", zamaWallet.address);
+    const userDecryptedTo = await zamaClient.reencrypt(
+      log1,
+      reEncryptPrivateKey,
+      publicKey,
+      signature,
+      zamaBridgeContractAddress,
+      zamaWallet.address,
+    );
+
+    console.log("is log2", log2);
+    console.log("is reEncryptPrivateKey", reEncryptPrivateKey);
+    console.log("is publicKey", publicKey);
+    console.log("is signature", signature);
+    console.log("is zamaBridgeContractAddress", zamaBridgeContractAddress);
+    console.log("is zamaWallet.address", zamaWallet.address);
+
+    const userDecryptedAmount = await zamaClient.reencrypt(
+      log2,
+      reEncryptPrivateKey,
+      publicKey,
+      signature,
+      zamaBridgeContractAddress,
+      zamaWallet.address,
+    );
+
+    const hexAddress = "0x" + userDecryptedTo.toString(16).padStart(40, "0");
+    const readableAmount = userDecryptedAmount.toString();
+
+    console.log("to is", hexAddress);
+    console.log("amount is", readableAmount);
   });
 }
 
