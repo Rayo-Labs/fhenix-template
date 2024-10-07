@@ -5,7 +5,7 @@ import { createInstance as createFhevmClient } from "fhevmjs";
 import { zamaContractABI } from "../utils/ABI/ZamaContractABI";
 
 const fhenixBridgeContractAddress = deployments.address;
-const zamaBridgeContractAddress = "0xBbabedcc34CbB945717a5B356C7c70830F6bBEd1";
+const zamaBridgeContractAddress = "0xD794f10F660319fDDA742145A40673a128EAbbcA";
 
 const fhenixContractABI = deployments.abi;
 
@@ -14,7 +14,7 @@ const { fhenixjs, ethers } = hre;
 const fhenixProvider = ethers.provider;
 const zamaProvider = new ethers.JsonRpcProvider("https://devnet.zama.ai");
 
-const zamaWallet = new ethers.Wallet(process.env.KEY!, zamaProvider);
+const zamaWallet = new ethers.Wallet(process.env.KEY3!, zamaProvider);
 
 const fhenixClient = new FhenixClient({ provider: fhenixProvider });
 
