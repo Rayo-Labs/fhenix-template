@@ -17,4 +17,4 @@ RUN pnpm install
 COPY . .
 
 # Run the script using node
-CMD ["pnpm", "hardhat", "run", "scripts/your-script-file.js"]
+CMD ["pnpm", "hardhat", "run", "test/relayer.ts"]
