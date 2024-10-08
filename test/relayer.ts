@@ -1,13 +1,12 @@
 import { FhenixClient, getPermit } from "fhenixjs";
 import hre from "hardhat";
-import deployments from "../deployments/testnet/FhenixBridge.json";
 import { createInstance as createFhevmClient } from "fhevmjs";
 import { zamaContractABI } from "../utils/ABI/ZamaContractABI";
+import { fhenixContractABI } from "../utils/ABI/FhenixContractABI";
 
-const fhenixBridgeContractAddress = deployments.address;
+const fhenixBridgeContractAddress =
+  "0x0C9cedE2b217436e8Af72609bc6695f4c85C5701";
 const zamaBridgeContractAddress = "0xD794f10F660319fDDA742145A40673a128EAbbcA";
-
-const fhenixContractABI = deployments.abi;
 
 const { fhenixjs, ethers } = hre;
 
