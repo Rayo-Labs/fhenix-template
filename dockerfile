@@ -13,9 +13,6 @@ RUN npm install -g pnpm
 # Install the dependencies using pnpm
 RUN pnpm install
 
-# Install the dependencies
-RUN npm install
-
 # Copy the rest of the application code to the container
 COPY . .
 
