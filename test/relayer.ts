@@ -5,7 +5,7 @@ import { zamaContractABI } from "../utils/ABI/ZamaContractABI";
 import { fhenixContractABI } from "../utils/ABI/FhenixContractABI";
 
 const fhenixBridgeContractAddress =
-  "0x0C9cedE2b217436e8Af72609bc6695f4c85C5701";
+  "0x1C3D23d808D7843D2B1aC30fE03fDE05ceb97D06";
 const zamaBridgeContractAddress = "0xD794f10F660319fDDA742145A40673a128EAbbcA";
 
 const { fhenixjs, ethers } = hre;

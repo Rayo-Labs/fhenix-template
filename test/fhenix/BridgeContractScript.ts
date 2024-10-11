@@ -1,5 +1,4 @@
 import { FhenixClient, getPermit } from "fhenixjs";
-import deployments from "../../deployments/testnet/FhenixBridge.json";
 
 import hre from "hardhat";
 
@@ -11,9 +10,338 @@ const wallets: { [key: number]: string } = {
   3: process.env.KEY3 as string,
 };
 
-const contractAddress = deployments.address; // 0x4B793f96591D23a2EF4B7604213E704d35E8497a
+const contractAddress = "0x1C3D23d808D7843D2B1aC30fE03fDE05ceb97D06";
 const relayerAddress = "0xA139Bcfb689926ebCF2AABDbd32FBaFC250e70d9";
-const contractABI = deployments.abi;
+const contractABI = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_tokenAddress",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+    ],
+    name: "OwnableInvalidOwner",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "OwnableUnauthorizedAccount",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "euint64",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "IntentProcesses",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferStarted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "eaddress",
+        name: "encryptedTo",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "euint64",
+        name: "encryptedAmount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "toPermit",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "amountPermit",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "relayerAddress",
+        type: "address",
+      },
+    ],
+    name: "Packet",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "acceptOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct inEaddress",
+        name: "_encryptedTo",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct inEuint64",
+        name: "_encryptedAmount",
+        type: "tuple",
+      },
+      {
+        internalType: "address",
+        name: "_relayerAddress",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "_relayerSeal",
+        type: "bytes32",
+      },
+    ],
+    name: "bridgeWEERC20",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    name: "intents",
+    outputs: [
+      {
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "euint64",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "nextIntentId",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_to",
+        type: "address",
+      },
+      {
+        components: [
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct inEuint64",
+        name: "_encryptedAmount",
+        type: "tuple",
+      },
+    ],
+    name: "onRecvIntent",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "pendingOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "weerc20",
+    outputs: [
+      {
+        internalType: "contract IFhenixWEERC20",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct inEuint64",
+        name: "_encryptedAmount",
+        type: "tuple",
+      },
+    ],
+    name: "withdraw",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
 
 function padToBytes32(hexString: string): string {
   if (!hexString.startsWith("0x")) {
