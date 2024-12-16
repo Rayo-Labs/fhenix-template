@@ -14,8 +14,8 @@ import { resolve } from "path";
 const dotenvConfigPath: string = process.env.DOTENV_CONFIG_PATH || "./.env";
 dotenvConfig({ path: resolve(__dirname, dotenvConfigPath) });
 
-const TESTNET_CHAIN_ID = 8008135;
-const TESTNET_RPC_URL = "https://api.helium.fhenix.zone";
+const TESTNET_CHAIN_ID = 8008148;
+const TESTNET_RPC_URL = "https://api.nitrogen.fhenix.zone";
 
 type TestnetConfig = {
   chainId: number;
@@ -35,7 +35,7 @@ const testnetConfig: TestnetConfig = {
 };
 
 // Select either private keys or mnemonic from .env file or environment variables
-const keys = process.env.KEY3 as string;
+const keys = process.env.KEY1 as string;
 if (!keys) {
   let mnemonic = process.env.MNEMONIC;
   if (!mnemonic) {

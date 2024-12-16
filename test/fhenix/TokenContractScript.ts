@@ -589,7 +589,7 @@ const contractABI = [
   },
 ];
 
-const contractAddress = "0xb1e3C8Ad0569a1548AC088FE46937c972ECC2100";
+const contractAddress = "0x2831d2b6b7bd5Ca9E2EEe932055a91f5a6cEBe2f";
 
 const wallets: { [key: number]: string } = {
   1: process.env.KEY1 as string,
@@ -606,7 +606,7 @@ async function ContractCall(
   let args = cargs;
   const wallet = new ethers.Wallet(
     wallets[key],
-    new ethers.JsonRpcProvider("https://api.helium.fhenix.zone"),
+    new ethers.JsonRpcProvider("https://api.nitrogen.fhenix.zone"),
   );
   const client = new FhenixClient({ provider: hre.ethers.provider });
 

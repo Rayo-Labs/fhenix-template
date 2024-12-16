@@ -368,7 +368,7 @@ async function ContractCall(
   let args = cargs;
   const wallet = new ethers.Wallet(
     wallets[key],
-    new ethers.JsonRpcProvider("https://api.helium.fhenix.zone"),
+    new ethers.JsonRpcProvider("https://api.nitrogen.fhenix.zone"),
   );
   const client = new FhenixClient({ provider: hre.ethers.provider });
 
